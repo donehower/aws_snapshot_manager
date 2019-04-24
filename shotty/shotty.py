@@ -23,6 +23,32 @@ def cli():
     ''' Shotty manages snapshots. '''
 
 
+# group for all snapshot commands
+@cli.group('snapshots')
+def snapshots():
+    ''' Commands for snapshots. '''
+
+@snapshots.command('list')
+@click.option('--project', default=None,
+              help="Volumes attached to project's EC2 instance. ")
+def list_snapshots(project):
+    ''' Lists snapshots of volumes for the project. '''
+    instances = filter_instances(project)
+
+    for i in instances:
+        for v in i.volumes.all():
+            for s in v.snapshots.all():
+                print(", ".join((
+                    s.id,
+                    v.id,
+                    s.state,
+                    s.progress,
+                    s.start_time.strftime("%c")
+                )))
+
+    return
+
+
 # group for all volume commands
 @cli.group('volumes')
 def volumes():
