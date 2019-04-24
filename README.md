@@ -19,6 +19,7 @@ shotty uses the configuration file created by the AWS cli.
 *subcommand*: list  
 
 *command*: snapshots  
-*subcommand*: list 
+*subcommand*: list
+*flag*: all (optional)
 
-*project* is optional  
+*flag*: project (optional)
