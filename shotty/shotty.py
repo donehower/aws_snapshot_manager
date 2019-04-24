@@ -106,9 +106,9 @@ def list_instances(project):
     Prints all EC2 instances to the console.
     For each instance prints: id, type, AZ, state, dns name.
     '''
-    res_instances = filter_instances(project)
+    instances = filter_instances(project)
 
-    for i in res_instances:
+    for i in instances:
         tags = {t['Key']: t['Value'] for t in i.tags or []}
         print(', '.join((
             i.id,
@@ -129,9 +129,9 @@ def stop_instances(project):
     '''
     Stops all EC2 instances for a project.
     '''
-    res_instances = filter_instances(project)
+    instances = filter_instances(project)
 
-    for i in res_instances:
+    for i in instances:
         print("Stopping instance {0}...".format(i.id))
         i.stop()
 
@@ -145,9 +145,9 @@ def start_instances(project):
     '''
     Starts all EC2 instances for a project.
     '''
-    res_instances = filter_instances(project)
+    instances = filter_instances(project)
 
-    for i in res_instances:
+    for i in instances:
         print("Starting instance {0}...".format(i.id))
         i.start()
 
