@@ -5,6 +5,7 @@ session = boto3.Session(profile_name='shotty')
 ec2 = session.resource('ec2')
 
 
+# helper function to retrieve instance collection objects
 def filter_instances(project):
     res_instances = []
 
@@ -18,10 +19,40 @@ def filter_instances(project):
 
 
 @click.group()
+def cli():
+    ''' Shotty manages snapshots. '''
+
+
+# group for all volume commands
+@cli.group('volumes')
+def volumes():
+    ''' Commands for volumes. '''
+
+
+@volumes.command('list')
+@click.option('--project', default=None,
+              help="Only volumes for project (tag Project:<name>)")
+def list_volumes(project):
+    ''' List volumes attached to EC2 instances for the given project. '''
+    instances = filter_instances(project)
+
+    for i in instances:
+        for v in i.volumes.all():
+            print(", ".join((
+                v.id,
+                i.id,
+                v.state,
+                str(v.size) + "GiB",
+                v.encrypted and "Encypted" or "Not Encrypted"
+                )))
+
+    return
+
+
+# group for all instance commands
+@cli.group('instances')
 def instances():
-    '''
-    Commands for instances
-    '''
+    ''' Commands for instances. '''
 
 
 @instances.command('list')
@@ -81,4 +112,4 @@ def start_instances(project):
 
 
 if __name__ == '__main__':
-    instances()
+    cli()
