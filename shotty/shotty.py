@@ -5,7 +5,7 @@ session = boto3.Session(profile_name='shotty')
 ec2 = session.resource('ec2')
 
 
-# helper function to retrieve instance collection objects
+# ---------- helper function to retrieve instance collection objects
 def filter_instances(project):
     res_instances = []
 
@@ -23,10 +23,11 @@ def cli():
     ''' Shotty manages snapshots. '''
 
 
-# group for all snapshot commands
+# ---------- SNAPSHOT COMMANDS ----------
 @cli.group('snapshots')
 def snapshots():
     ''' Commands for snapshots. '''
+
 
 @snapshots.command('list')
 @click.option('--project', default=None,
@@ -49,7 +50,7 @@ def list_snapshots(project):
     return
 
 
-# group for all volume commands
+# ---------- VOLUMES COMMANDS ----------
 @cli.group('volumes')
 def volumes():
     ''' Commands for volumes. '''
@@ -70,15 +71,31 @@ def list_volumes(project):
                 v.state,
                 str(v.size) + "GiB",
                 v.encrypted and "Encypted" or "Not Encrypted"
-                )))
+            )))
 
     return
 
 
-# group for all instance commands
+# ---------- INSTANCE COMMANDS ----------
 @cli.group('instances')
 def instances():
     ''' Commands for instances. '''
+
+
+@instances.command('snapshot')
+@click.option('--project', default=None,
+              help="Create snapshots of all instances.")
+def create_snapshots(project):
+    ''' Create snapshots of all instances. '''
+    instances = filter_instances(project)
+
+    for i in instances:
+        i.stop()
+        for v in i.volumes.all():
+            print("Creating snapshot of {0}".format(v.id))
+            v.create_snapshot(Description="Created by snapshot-manager")
+
+    return
 
 
 @instances.command('list')
