@@ -63,6 +63,7 @@ def stop_instances(project):
 
     return
 
+
 @instances.command('start')
 @click.option('--project', default=None,
               help="Only instances for the project")
@@ -77,6 +78,7 @@ def start_instances(project):
         i.start()
 
     return
+
 
 if __name__ == '__main__':
     instances()
